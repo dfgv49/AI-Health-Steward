@@ -1,0 +1,73 @@
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: health-steward-db
+    # 开机/重启 Docker Desktop 后自动拉起（手动 stop 的除外）
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-health_steward}
+      POSTGRES_USER: ${POSTGRES_USER:-health}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-health}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: health-steward-backend
+    restart: unless-stopped
+    env_file: backend/.env
+    environment:
+      # Docker Desktop / bind mount 下 watchfiles 的文件事件监听不可靠,
+      # 会导致 uvicorn --reload 检测不到代码变化(reload 后仍跑旧代码,
+      # 流式 SSE 缺失 [DONE] 使前端卡在"持续输出"). 强制轮询以根治.
+      WATCHFILES_FORCE_POLLING: "true"
+      USERDATA_DIR: "/app/userdata"
+    ports:
+      - "8000:8000"
+    # Lets the container reach services running on the host (e.g. Ollama).
+    # Without this, `host.docker.internal` does not resolve on plain Linux, so
+    # LOCAL_LLM_BASE=http://host.docker.internal:11434/v1 cannot work there.
+    # Note: `localhost` inside a container is the container itself, not the host.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./backend:/app
+      # User health data: bind-mounted to host so files are visible & persistent.
+      # Host path configurable via env (default ./userdata).
+      - ${USERDATA_HOST_DIR:-./userdata}:/app/userdata
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --reload-dir /app/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: health-steward-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      # Inside the compose network the backend is reachable by service name.
+      # vite.config.ts defaults to 127.0.0.1:8000 for host-side `npm run dev`.
+      VITE_PROXY_TARGET: "http://backend:8000"
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+    depends_on:
+      - backend
+    command: npm run dev -- --host 0.0.0.0
+
+volumes:
+  pgdata:

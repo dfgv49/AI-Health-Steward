@@ -1,0 +1,70 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Environment files — secrets must NEVER be committed; only the template is tracked.
+# NOTE: a bare `.env` rule does not match `.env.bak-20260101-120000`, which is how
+# real API keys once slipped into a staging area. The globs below close that hole.
+.env
+.env.*
+*.env
+*.bak
+*.bak-*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+*.db
+*.sqlite3
+
+# Alembic
+backend/alembic/versions/*.pyc
+
+# Logs
+*.log
+
+# Claude/Codex
+.claude/
+.codex/
+
+# Obsidian
+.obsidian/
+openspec/
+
+# Local study notes (written during code review; intentionally kept out of the repo)
+summary/
+
+# User data / runtime storage — never commit
+userdata/
+backend/uploads/
+
+# Test / tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
