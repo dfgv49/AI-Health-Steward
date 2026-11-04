@@ -144,7 +144,47 @@ docker compose logs backend | grep 'BM25 index built'
 
 ---
 
-## 七、与上游同步
+## 七、补充改动：移除飞书渠道
+
+**第二项改动**：删除上游的飞书（Lark）多渠道接入，改为 **WebUI 单入口**。
+
+### 为什么删
+
+- 飞书渠道需要企业自建应用与 WebSocket 长连接，个人自部署用不上；
+- 它引入了 `lark-oapi` 依赖（约 3 个传递依赖），是本地开发环境里唯一装不上的包；
+- 删除后代码量减少约 600 行，项目边界更清晰。
+
+### 删了什么
+
+| 对象 | 处理 |
+|---|---|
+| `backend/app/services/feishu.py`（406 行） | 整文件删除 |
+| `backend/app/api/routes/feishu.py`（165 行） | 整文件删除 |
+| `backend/app/models/feishu.py`（31 行） | 整文件删除 |
+| `backend/app/main.py` | 去掉 lifespan 中启动/停止 Bot 的调用 |
+| `backend/app/api/v1/router.py` | 去掉路由挂载 |
+| `backend/app/models/__init__.py` | 去掉 `FeishuChannel` 导出 |
+| `backend/app/core/config.py` | 删 4 个 `FEISHU_*` 配置项 |
+| `backend/requirements.txt` | 删 `lark-oapi` |
+| `frontend/src/pages/Settings.tsx` | 删飞书渠道管理 UI 与 ChannelModal |
+| `frontend/src/lib/api.ts` | 删 `feishuApi` 与相关类型 |
+| `.env.example` | 删 `FEISHU_*` 示例 |
+| 文档 | README / README_EN / OVERVIEW / DEPLOYMENT / DEVELOPMENT / PRIVACY 同步 |
+
+### ⚠️ 有意保留的部分
+
+| 保留项 | 原因 |
+|---|---|
+| `backend/alembic/versions/e5f6a7b8c9d0_feishu_channels.py` | **已执行的迁移不能删**，否则迁移链断裂（后续 6 个迁移依赖它） |
+| 数据库表 `feishu_channels` | 空表，删除需新增迁移；无模型映射后不影响运行 |
+| `settings.py` 的 `_CONFIG_ONLY_TABLES` 含 `feishu_channels` | 保证数据导出/清空时不误删该表 |
+| `tests/test_settings_data.py` 的相关断言 | 同上，验证该表不参与数据清除 |
+
+> **如需彻底删表**，新增一个迁移执行 `op.drop_table("feishu_channels")` 即可，代码层已无依赖。
+
+---
+
+## 八、与上游同步
 
 上游为独立仓库。同步方式二选一：
 
@@ -158,10 +198,11 @@ git merge upstream/main
 ```
 
 **合并时最易冲突的文件**：`backend/app/services/rag.py`（检索主逻辑）、`backend/app/core/config.py`（配置追加）。
+**合并时最易误恢复的文件**：被删除的三个 `feishu.py`、`main.py` 的 lifespan、`api/v1/router.py` 的路由挂载。
 
 ---
 
-## 八、许可与署名
+## 九、许可与署名
 
 上游项目采用 **MIT License**（Copyright (c) 2026 AI Health Steward Contributors）。
 本仓库保留原始 `LICENSE` 与版权声明，改动部分同样以 MIT 协议提供。

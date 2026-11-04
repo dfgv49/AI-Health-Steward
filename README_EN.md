@@ -49,8 +49,7 @@ Most health apps are black boxes: your lab results, diagnoses, and medications g
 - **AI Image Interpretation** — send report images in chat; AI extracts structured data, interprets it, one-click archive
 - **Hybrid Report Search (RAG)** — archived reports auto-vectorized; retrieval runs a **vector pass and a BM25 keyword pass fused with RRF**, covering both semantic questions and abbreviation/precise-value lookups (e.g. "ALT 45", "HGB"); returns an explicit no-evidence signal instead of forcing an answer
 - **Long-Term Conversation Memory** — each consultation rolls into a compressed per-member long-term memory
-- **Feishu / Lark Integration** — multiple bots, one per family member; WebSocket for text Q&A and image parsing (great on mobile)
-- **Dual-Entry Design** — WebUI is the full management backend; Feishu is the lightweight daily entry point; data flows between both automatically
+- **Single Web Entry Point** — the WebUI is the complete management backend; all capabilities live in one place
 - **Pluggable Models** — multimodal API / text API / local LLM, configured on demand
 - **Cost Optimization** — eliminates duplicate metric-extraction LLM calls; skips LLM when a summary has no new data
 - **Production Deployment** — built-in `docker-compose.prod.yml` (no hot-reload/polling, DEBUG=false); user data organized by member/year/month
@@ -145,11 +144,11 @@ See [Deployment Guide](DEPLOYMENT.md) for detailed instructions.
 AI-Health-Steward/
 ├── backend/                 # Python FastAPI backend
 │   ├── app/
-│   │   ├── api/routes/      # API routes (members/metrics/chat/reports/checkup/profile/settings/feishu/scales/tasks/summaries)
+│   │   ├── api/routes/      # API routes (members/metrics/chat/reports/checkup/profile/settings/scales/tasks/summaries)
 │   │   ├── core/            # Config, database, auth/rate-limit, reference ranges, utilities
-│   │   ├── models/          # SQLAlchemy models (family/health/feishu/assessments/tasks/summaries)
+│   │   ├── models/          # SQLAlchemy models (family/health/assessments/tasks/summaries)
 │   │   ├── schemas/         # Pydantic schemas
-│   │   ├── services/        # Business logic (consultation/extraction/hybrid_retrieval/checkup/feishu/memory/tasks/summaries/file_storage)
+│   │   ├── services/        # Business logic (consultation/extraction/hybrid_retrieval/checkup/memory/tasks/summaries/file_storage)
 │   │   │   └── tools/       # AI tools (function calling: query/extract/assess)
 │   │   ├── prompts/         # AI prompt templates
 │   │   └── providers/       # Model provider abstraction (multimodal/text/local/embedding)
@@ -178,7 +177,7 @@ AI-Health-Steward/
 | V0.1 | Project scaffold & data foundation | ✅ Done |
 | V0.2 | AI consultation — intent routing, tool calling, chat UI | ✅ Done |
 | V0.3 | Report import & visualization — multimodal extraction, trends, dashboard, report management, checkup recommendations, RAG | ✅ Done |
-| V0.4 | Feishu channel — multi-channel management, data collection, lightweight Q&A | ✅ Done |
+| V0.4 | ~~Feishu channel~~ (removed in this fork; WebUI is the single entry point) | ⛔ Removed |
 | V1.0 | Open-source release — docs, one-click deploy, hardening (age-tiered ranges / critical-value alerts / family overview / long-term memory / auth & rate limiting) | ✅ Done |
 | V1.1 | Three new features — follow-up/medication reminders, periodic health summaries, risk self-assessment (9 scales) | ✅ Done |
 | V1.2 | Code quality optimization — 12 items (SSE blocking fix, transaction optimization, JSON cleaning, dedup, pagination, etc.) | ✅ Done |
@@ -213,7 +212,7 @@ Issues and PRs are welcome! Please read the [Contributing Guide](CONTRIBUTING.md
 
 ## Documentation
 
-- [Deployment Guide](DEPLOYMENT.md) — Docker setup, configuration, Feishu bot setup
+- [Deployment Guide](DEPLOYMENT.md) — Docker setup, configuration, retrieval settings
 - [Developer Guide](DEVELOPMENT.md) — Architecture, extension guides (Provider / Tools / Channels)
 - [Privacy Statement](PRIVACY.md) — Data storage and model API boundaries
 - [Contributing Guide](CONTRIBUTING.md) — Dev environment and code conventions

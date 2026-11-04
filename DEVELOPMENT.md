@@ -6,8 +6,6 @@
 用户 → WebUI (React) → API (FastAPI) → PostgreSQL + pgvector
                          ↓
                     Model Router → 多模态 API / 文字 API / 本地 LLM
-                         ↓
-                    飞书 Bot (WebSocket)
 ```
 
 ### 后端结构
@@ -26,8 +24,7 @@ backend/app/
 │   │   ├── tasks.py         # 待办任务管理（V1.1）
 │   │   ├── summaries.py     # 健康小结（V1.1）
 │   │   ├── settings.py      # 系统设置与配置管理
-│   │   ├── providers.py     # 模型 Provider 状态查询
-│   │   └── feishu.py        # 飞书渠道管理
+│   │   └── providers.py     # 模型 Provider 状态查询
 │   └── v1/router.py     # 路由聚合（挂载全局鉴权）
 ├── core/
 │   ├── config.py          # Pydantic Settings（从 .env 加载，含 USERDATA_DIR）
@@ -40,8 +37,7 @@ backend/app/
 │   ├── health.py          # 健康数据模型（A-H 字段族 + 报告 + 体检 + 向量）
 │   ├── assessments.py     # 量表测评结果模型（V1.1）
 │   ├── tasks.py           # 健康待办任务模型（V1.1）
-│   ├── summaries.py       # 健康小结模型（V1.1）
-│   └── feishu.py          # 飞书渠道配置模型
+│   └── summaries.py       # 健康小结模型（V1.1）
 ├── providers/
 │   ├── base.py            # ModelProvider 抽象接口
 │   ├── multimodal.py      # 多模态 API provider
@@ -63,7 +59,6 @@ backend/app/
 │   ├── summary_scheduler.py # 小结定期自动触发调度器（V1.1）
 │   ├── rag.py             # 报告向量化 + 混合检索（向量/BM25 双路召回 + RRF 融合 + 阈值）
 │   ├── bm25_index.py      # BM25 关键词索引（jieba 分词，按成员隔离，归档后显式失效）
-│   ├── feishu.py          # 飞书多渠道 Bot 管理
 │   └── tools/             # AI 工具（function calling）
 │       ├── base.py          # HealthTool 抽象
 │       ├── registry.py      # 工具注册中心
@@ -157,14 +152,6 @@ class MyTool(HealthTool):
     async def execute(self, db, member_id, **kwargs):
         return {"result": "..."}
 ```
-
-### 添加新的消息渠道
-
-1. 在 `backend/app/models/` 下新建渠道配置模型（参考 `feishu.py`）
-2. 在 `backend/app/services/` 下实现渠道 Bot 服务
-3. 在 `backend/app/api/routes/` 下添加管理端点
-4. 在 `main.py` 的 lifespan 中启动渠道连接
-5. 在前端设置页添加渠道配置 UI
 
 ### 数据库迁移
 

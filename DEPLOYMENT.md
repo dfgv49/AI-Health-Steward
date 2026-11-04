@@ -186,37 +186,7 @@ docker compose exec backend python -c "from app.services.bm25_index import deps_
 | `APP_DEBUG` | true | 生产环境建议设为 false |
 | `CORS_ORIGINS` | http://localhost:5173 | 多个用逗号分隔 |
 
-## 四、飞书 Bot 配置
-
-### 创建飞书应用
-
-1. 前往[飞书开放平台](https://open.feishu.cn/)创建企业自建应用
-2. 开启**机器人能力**
-3. 获取 `App ID` 和 `App Secret`
-
-### 配置权限
-
-在应用管理页面添加以下权限：
-- `im:message` — 获取与发送单聊、群组消息
-- `im:message:readonly` — 获取单聊、群组消息（读取消息内容）
-- `im:resource` — 获取消息中的资源文件（下载图片）
-
-### 启用 WebSocket 模式
-
-1. 在「事件与回调」页面选择「长连接模式」
-2. 订阅事件：`im.message.receive_v1`（接收消息）
-
-### 在系统中配置
-
-1. 打开 WebUI → 设置 → 飞书渠道
-2. 点击「添加渠道」
-3. 填写渠道名称、App ID、App Secret
-4. 选择绑定的家庭成员（该渠道接收的消息和图片将归到此成员）
-5. 保存后自动建立 WebSocket 连接
-
-支持配置多个飞书渠道，每个渠道绑定不同的家庭成员。
-
-## 五、本地开发部署（不用 Docker）
+## 四、本地开发部署（不用 Docker）
 
 ```bash
 # 1. 启动数据库
@@ -239,7 +209,7 @@ npm run dev
 # 4. 访问 http://localhost:5173
 ```
 
-## 六、数据备份与恢复
+## 五、数据备份与恢复
 
 ```bash
 # 备份
@@ -251,7 +221,7 @@ docker exec -i health-steward-db psql -U health health_steward < backup.sql
 
 上传的原始报告文件存储在 `userdata` 目录中（按 成员/年/月 组织）。
 
-## 七、用户数据存储配置
+## 六、用户数据存储配置
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|

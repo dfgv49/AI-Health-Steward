@@ -55,7 +55,9 @@ class TestLoadRecentHistory:
         assert history[0].content == "回复2"
         assert history[1].content == "问题3"
 
-    async def test_does_not_mix_feishu_into_webui_context(self) -> None:
+    async def test_does_not_mix_other_sources_into_webui_context(self) -> None:
+        # The webui context must be restricted to source == "webui", so rows
+        # written by any other entry point never leak into it.
         db = MagicMock()
         db.execute = AsyncMock(
             return_value=_execute_result(

@@ -11,7 +11,6 @@ from app.api.routes import profile
 from app.api.routes import reports
 from app.api.routes import checkup
 from app.api.routes import settings
-from app.api.routes import feishu
 from app.api.routes import tasks
 from app.api.routes import summaries
 from app.api.routes import scales
@@ -30,7 +29,6 @@ api_router.include_router(profile.router)
 api_router.include_router(reports.router)
 api_router.include_router(checkup.router)
 api_router.include_router(settings.router)
-api_router.include_router(feishu.router)
 api_router.include_router(tasks.router)
 api_router.include_router(summaries.router)
 api_router.include_router(scales.router)

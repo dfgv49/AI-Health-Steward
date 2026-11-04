@@ -91,12 +91,6 @@ class Settings(BaseSettings):
     # measuring on a labelled query set, or legitimate questions get refused.
     MIN_RELEVANCE: float = 0.0
 
-    # Feishu bot (V0.4)
-    FEISHU_APP_ID: str = ""
-    FEISHU_APP_SECRET: str = ""
-    FEISHU_VERIFICATION_TOKEN: str = ""
-    FEISHU_ENCRYPT_KEY: str = ""
-
     # User data directory for health files (reports, summaries).
     # Docker: /app/userdata (bind-mounted to host via docker-compose).
     # Local dev: ~/Documents/健康管家 (visible in Finder/Documents).

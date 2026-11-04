@@ -11,7 +11,6 @@ from app.models.health import (
     MetricRecord,
     ReportRecord,
 )
-from app.models.feishu import FeishuChannel
 from app.models.tasks import HealthTask
 from app.models.summaries import HealthSummary
 from app.models.assessments import ScaleResult
@@ -30,5 +29,4 @@ __all__ = [
     "DataProvenance",
     "CheckupReport",
     "ReportRecord",
-    "FeishuChannel",
 ]

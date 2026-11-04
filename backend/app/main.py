@@ -10,14 +10,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.router import api_router
 from app.core.config import settings
 from app.core.database import async_session_factory
-from app.services.feishu import feishu_bot
 from app.services.summary_scheduler import scheduler_loop
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Start Feishu channels if any are configured
-    asyncio.ensure_future(feishu_bot.start_all())
     # Periodic health-summary auto-generation (natural week/month/year first day)
     scheduler_task = asyncio.ensure_future(scheduler_loop(async_session_factory))
     yield
@@ -26,7 +23,6 @@ async def lifespan(app: FastAPI):
         await scheduler_task
     except asyncio.CancelledError:
         pass
-    await feishu_bot.stop_all()
 
 
 app = FastAPI(

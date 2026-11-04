@@ -1,4 +1,4 @@
-"""Second live API campaign: report upload/confirm, providers, feishu, checkup.
+"""Second live API campaign: report upload/confirm, providers, checkup.
 
 Deliberately avoids triggering paid multimodal extraction where possible; the
 confirm/archival path is tested with a self-supplied extraction payload.
@@ -104,13 +104,6 @@ def main() -> int:
     check("providers status -> 200", r.status_code == 200, f"{r.status_code} {r.text}")
     r = client.get(f"{PREFIX}/providers/health")
     check("providers health -> 200", r.status_code == 200, f"{r.status_code} {r.text}")
-
-    # ---- Feishu ----
-    case("Feishu")
-    r = client.get(f"{PREFIX}/feishu/status")
-    check("feishu status -> 200", r.status_code == 200, f"{r.status_code} {r.text}")
-    r = client.get(f"{PREFIX}/feishu/channels")
-    check("feishu channels -> 200", r.status_code == 200, f"{r.status_code} {r.text}")
 
     # ---- Checkup ----
     case("Checkup")
