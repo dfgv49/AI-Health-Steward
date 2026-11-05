@@ -177,7 +177,6 @@ AI-Health-Steward/
 | V0.1 | Project scaffold & data foundation | ✅ Done |
 | V0.2 | AI consultation — intent routing, tool calling, chat UI | ✅ Done |
 | V0.3 | Report import & visualization — multimodal extraction, trends, dashboard, report management, checkup recommendations, RAG | ✅ Done |
-| V0.4 | ~~Feishu channel~~ (removed in this fork; WebUI is the single entry point) | ⛔ Removed |
 | V1.0 | Open-source release — docs, one-click deploy, hardening (age-tiered ranges / critical-value alerts / family overview / long-term memory / auth & rate limiting) | ✅ Done |
 | V1.1 | Three new features — follow-up/medication reminders, periodic health summaries, risk self-assessment (9 scales) | ✅ Done |
 | V1.2 | Code quality optimization — 12 items (SSE blocking fix, transaction optimization, JSON cleaning, dedup, pagination, etc.) | ✅ Done |
